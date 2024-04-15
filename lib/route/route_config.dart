@@ -1,17 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:provider_setup/route/route_paths.dart';
+import '../app/controller/dashboard/dashboard_controller.dart';
 import '../app/view/counter/counter_screen.dart';
+import '../app/view/dashboard/dashboard.dart';
 import '../app/view/home/home.dart';
 import '../app/view/request/request.dart';
 import '../app/view/setting/setting.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../services/database/local_database.dart';
+
 class RoutesConfig {
 
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+
+
+  /// Initial Route...
+  static Widget initialScreen() {
+    LocalDatabase localDatabase = LocalDatabase();
+    String? route = localDatabase.route;
+    // if (route == Routs.signUp) {
+    //   return const SignUp();
+    // } else if (route == Routs.bmiCalculator) {
+    //   return const BMICalculator();
+    // } else {
+    //   return localDatabase.accessToken?.isNotEmpty == true ? const DashBoard() : const IntroScreen();
+    // }
+    return const DashBoard();
+  }
+
+
+
 
 
   ///1)  Route Config...
@@ -20,7 +43,25 @@ class RoutesConfig {
       GoRoute(
         name: Routes.initialRoute,
         path: Routes.initialRoute,
-        builder: (context, state) =>  HomeView(name: "sanjana"),
+        pageBuilder: (context, state) {
+          return materialPage(state: state, child: initialScreen());
+        },
+      ),
+      GoRoute(
+        name: Routes.dashboard,
+        path: Routes.dashboard,
+        pageBuilder: (context, state) {
+          DashBoard? data = state.extra as DashBoard?;
+
+          if (data?.dashBoardIndex != null) {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              context.read<DashboardController>().changeDashBoardIndex(index: data?.dashBoardIndex ?? 0);
+            });
+          }
+
+          return customTransitionPage(
+              state: state, child: DashBoard(dashBoardIndex: data?.dashBoardIndex ?? 0));
+        },
       ),
       GoRoute(
         name: Routes.settings,

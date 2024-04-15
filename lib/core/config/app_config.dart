@@ -10,7 +10,7 @@ import '../../services/database/local_database.dart';
 
 class AppConfig {
   ///APP Configurations..
-  static const String name = 'Xern';
+  static const String name = 'Provider Setup';
   static const String version = '1.0';
   static const String packageName = 'app.xern.com';
 

@@ -200,7 +200,7 @@ class ImageView extends StatelessWidget {
     StackTrace? stackTrace,
   }) {
     return Image.asset(
-   AppImages.noImage,
+   AppImages.abeBooks,
       color: errorColor,
       height: height,
       width: width,
